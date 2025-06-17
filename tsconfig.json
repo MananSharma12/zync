@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    /* Language and Environment */
+    "target": "es2016",
+    /* Modules */
+    "module": "commonjs",
+    /* Interop Constraints */
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    /* Type Checking */
+    "skipLibCheck": true,
+    /* Project References */
+    "composite": true
+  },
+  "references": [
+    { "path": "./packages/shared" },
+    { "path": "./packages/hooks" },
+    { "path": "./packages/processor" }
+  ],
+  "files": []
+}

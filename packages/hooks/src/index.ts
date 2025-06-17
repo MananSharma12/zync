@@ -1,7 +1,5 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
-
-const client = new PrismaClient();
+import { prisma } from "@zync/shared";
 
 const app = express();
 app.use(express.json());
@@ -11,7 +9,7 @@ app.post("/hook/catch/:userId/:zapId", async (req, res) => {
     const zapId = req.params.zapId;
     const body = req.body;
 
-    await client.$transaction(async tx => {
+    await prisma.$transaction(async tx => {
         const run = await tx.zapRun.create({
             data: {
                 zapId: zapId,

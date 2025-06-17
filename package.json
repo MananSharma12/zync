@@ -1,0 +1,22 @@
+{
+  "name": "zync",
+  "version": "1.0.0",
+  "description": "Zync monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npm run build --workspace=@zync/shared && npm run build --workspaces --if-present",
+    "start:hooks": "npm run start --workspace=@zync/hooks",
+    "start:processor": "npm run start --workspace=@zync/processor",
+    "prisma:generate": "npm run prisma:generate --workspace=@zync/shared"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  }
+}
