@@ -1,22 +1,37 @@
 import { prisma } from "@zync/shared";
+import { Kafka } from "kafkajs";
+
+const TOPIC_NAME = "zap-events";
+const kafka = new Kafka({
+  clientId: "zync-outbox-processor",
+  brokers: ["localhost:9092"]
+});
 
 async function main() {
-  console.log("Processor started");
-  
-  // Example: Process ZapRunOutbox items
-  const outboxItems = await prisma.zapRunOutbox.findMany({
-    include: {
-      zapRun: true
-    }
+  const producer = kafka.producer();
+  await producer.connect();
+
+  const pendingRows = await prisma.zapRunOutbox.findMany({
+    where: {},
+    take: 10,
   });
-  
-  console.log(`Found ${outboxItems.length} items in outbox`);
-  
-  // Process each item
-  for (const item of outboxItems) {
-    console.log(`Processing run: ${item.zapRunId}`);
-    // Add your processing logic here
+
+  for (const item of pendingRows) {
+    await producer.send({
+      topic: TOPIC_NAME,
+      messages: pendingRows.map(r => ({
+        value: r.zapRunId
+      })),
+    });
   }
+
+  await prisma.zapRunOutbox.deleteMany({
+    where: {
+      id: {
+        in: pendingRows.map(r => r.id),
+      },
+    },
+  });
 }
 
 main()
