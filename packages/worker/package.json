@@ -1,12 +1,11 @@
 {
-  "name": "@zync/hooks",
+  "name": "@zync/worker",
   "version": "1.0.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "start": "tsc -b && node dist/index.js"
   },
-  "keywords": [],
   "author": "Manan Sharma",
   "license": "ISC",
   "type": "commonjs",

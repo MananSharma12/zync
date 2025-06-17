@@ -11,12 +11,18 @@
     "build": "npm run build --workspace=@zync/shared && npm run build --workspaces --if-present",
     "start:hooks": "npm run start --workspace=@zync/hooks",
     "start:processor": "npm run start --workspace=@zync/processor",
+    "start:worker": "npm run start --workspace=@zync/worker",
     "prisma:generate": "npm run prisma:generate --workspace=@zync/shared"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "express": "^5.1.0"
+  },
   "devDependencies": {
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.3",
     "typescript": "^5.8.3"
   }
 }

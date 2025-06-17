@@ -15,7 +15,8 @@
   "references": [
     { "path": "./packages/shared" },
     { "path": "./packages/hooks" },
-    { "path": "./packages/processor" }
+    { "path": "./packages/processor" },
+    { "path": "./packages/worker" },
   ],
   "files": []
 }

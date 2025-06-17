@@ -9,10 +9,11 @@
     "prisma:generate": "prisma generate"
   },
   "keywords": [],
-  "author": "",
+  "author": "Manan Sharma",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^6.9.0",
-    "prisma": "^6.10.0"
+    "prisma": "^6.10.0",
+    "kafkajs": "^2.2.4"
   }
 }
