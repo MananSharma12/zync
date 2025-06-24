@@ -4,6 +4,7 @@
   "description": "Zync monorepo",
   "private": true,
   "workspaces": [
+    "app/*",
     "packages/*"
   ],
   "scripts": {
@@ -12,6 +13,8 @@
     "start:hooks": "npm run start --workspace=@zync/hooks",
     "start:processor": "npm run start --workspace=@zync/processor",
     "start:worker": "npm run start --workspace=@zync/worker",
+    "start:backend": "npm run start --workspace=@zync/backend",
+    "dev:backend": "npm run dev --workspace=@zync/backend",
     "prisma:generate": "npm run prisma:generate --workspace=@zync/shared"
   },
   "keywords": [],
