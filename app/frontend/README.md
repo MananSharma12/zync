@@ -47,7 +47,7 @@ Run the development server:
 
 ```bash
 # From the root directory
-npm run dev --workspace=frontend
+npm run dev:frontend
 
 # Or from the frontend directory
 npm run dev
@@ -59,7 +59,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 ```bash
 # From the root directory
-npm run build --workspace=frontend
+npm run build --workspace=@zync/frontend
 
 # Or from the frontend directory
 npm run build
@@ -77,7 +77,7 @@ API endpoints are defined in the backend service and documented in the root READ
 ## Folder Structure
 
 ```
-frontend/
+app/frontend/ (@zync/frontend)
 ├── public/           # Static assets
 ├── src/
 │   ├── app/          # Next.js App Router

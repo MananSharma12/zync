@@ -14,7 +14,9 @@
     "start:processor": "npm run start --workspace=@zync/processor",
     "start:worker": "npm run start --workspace=@zync/worker",
     "start:backend": "npm run start --workspace=@zync/backend",
+    "start:frontend": "npm run start --workspace=@zync/frontend",
     "dev:backend": "npm run dev --workspace=@zync/backend",
+    "dev:frontend": "npm run dev --workspace=@zync/frontend",
     "prisma:generate": "npm run prisma:generate --workspace=@zync/shared"
   },
   "keywords": [],

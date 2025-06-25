@@ -17,7 +17,8 @@
     { "path": "./packages/hooks" },
     { "path": "./packages/processor" },
     { "path": "./packages/worker" },
-    { "path": "./app/backend" }
+    { "path": "./app/backend" },
+    { "path": "./app/frontend" }
   ],
   "files": []
 }

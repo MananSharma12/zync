@@ -9,18 +9,24 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Zap, Eye, EyeOff } from "lucide-react"
 import Link from "next/link"
+import axios from "axios";
+import { BACKEND_URL } from "@/config";
+import { useRouter } from "next/navigation";
 
 export default function SignInPage() {
     const [showPassword, setShowPassword] = useState(false)
     const [formData, setFormData] = useState({
-        email: "",
+        username: "",
         password: "",
     })
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const router = useRouter();
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        // Handle signin logic here
-        console.log("Signin data:", formData)
+        const res = await axios.post(`${BACKEND_URL}/api/v1/user/signin`, formData)
+        localStorage.setItem("token", res.data.token)
+        router.push("/dashboard");
     }
 
     return (
@@ -42,8 +48,8 @@ export default function SignInPage() {
                                 id="email"
                                 type="email"
                                 placeholder="Enter your email"
-                                value={formData.email}
-                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                value={formData.username}
+                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
                                 required
                             />
                         </div>

@@ -9,7 +9,9 @@ export const Header = () => {
             <div className="container mx-auto px-4 py-4 flex items-center justify-between">
                 <div className="flex items-center gap-2">
                     <Zap className="h-8 w-8 text-blue-600" />
-                    <span className="text-2xl font-bold">Zync</span>
+                    <Link href="/">
+                        <span className="text-2xl font-bold">Zync</span>
+                    </Link>
                 </div>
                 <div className="flex items-center gap-4">
                     <ThemeToggle />

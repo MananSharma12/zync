@@ -1,5 +1,5 @@
 import express from "express";
-// import { prisma } from "@zync/shared";
+import cors from "cors";
 import { userRouter } from "./router/user";
 import { zapRouter } from "./router/zap";
 
@@ -7,6 +7,9 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(express.json());
+app.use(cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+}));
 
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/zap", zapRouter);

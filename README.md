@@ -9,6 +9,7 @@ This is a monorepo for the project, containing multiple packages that share comm
 ```
 zync/
 ├── app/
+│   ├── frontend/      # Next.js frontend application
 │   └── backend/       # Backend service with authentication
 ├── packages/
 │   ├── hooks/         # Webhook receiver service
@@ -20,6 +21,7 @@ zync/
 
 ## Packages
 
+- **@zync/frontend**: Next.js frontend application
 - **@zync/backend**: Backend service with authentication
 - **@zync/hooks**: Webhook receiver service
 - **@zync/processor**: Data processing service
@@ -46,7 +48,9 @@ zync/
    ```
    npm run start:hooks     # Start the hooks service
    npm run start:processor # Start the processor service
+   npm run start:frontend  # Start the frontend in production mode
    npm run start:backend   # Start the backend service
+   npm run dev:frontend    # Start the frontend in development mode
    npm run dev:backend     # Start the backend service in development mode
    ```
 
