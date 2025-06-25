@@ -22,6 +22,7 @@ router.post('/', authMiddleware, (async (req: AuthenticatedRequest, res: Respons
         const zap = await prisma.zap.create({
             data: {
                 userId: id,
+                name: parsedData.data.name,
                 triggerId: "",
                 actions: {
                     create: parsedData.data.actions.map((x, index) => ({

@@ -1,49 +1,47 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Zap, Plus, Search, Play, Pause, Settings, MoreHorizontal } from "lucide-react"
+import { Zap, Plus, Search, Pause, Settings, MoreHorizontal } from "lucide-react"
 import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import axios from "axios";
+import { BACKEND_URL } from "@/config";
+import type { Zaps } from "@/types";
 
-const mockZaps = [
-    {
-        id: "1",
-        name: "Email to Slack Notification",
-        trigger: "Gmail",
-        actions: ["Slack"],
-        status: "active",
-        runs: 142,
-        lastRun: "2 hours ago",
-    },
-    {
-        id: "2",
-        name: "New Customer to CRM",
-        trigger: "Stripe",
-        actions: ["HubSpot", "Gmail"],
-        status: "paused",
-        runs: 89,
-        lastRun: "1 day ago",
-    },
-    {
-        id: "3",
-        name: "Social Media Backup",
-        trigger: "Twitter",
-        actions: ["Google Drive"],
-        status: "active",
-        runs: 256,
-        lastRun: "30 minutes ago",
-    },
-]
+function useZaps () {
+    const [zaps, setZaps] = useState<Zaps[]>([])
+
+    useEffect(() => {
+        axios.get(`${BACKEND_URL}/api/v1/zap`, {
+            headers: {
+                Authorization: localStorage.getItem("token")
+            }
+        }).then(res => {
+            setZaps(res.data.zaps)
+        }).catch(err => {
+            console.log(err)
+        })
+    }, []);
+
+    return zaps
+}
 
 export default function DashboardPage() {
     const [searchQuery, setSearchQuery] = useState("")
+    const zaps = useZaps()
 
-    const filteredZaps = mockZaps.filter((zap) => zap.name.toLowerCase().includes(searchQuery.toLowerCase()))
+    const filteredZaps = zaps.filter((zap) => {
+        const triggerName = zap.trigger?.type?.name || '';
+        const actionNames = zap.actions.map(action => action.type.name).join(' ');
+        const searchableText = `${triggerName} ${actionNames}`.toLowerCase();
+
+        return searchableText.includes(searchQuery.toLowerCase());
+    });
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -121,59 +119,56 @@ export default function DashboardPage() {
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="grid gap-6">
-                        {filteredZaps.map((zap) => (
-                            <Card key={zap.id} className="hover:shadow-md transition-shadow">
-                                <CardHeader>
-                                    <div className="flex items-start justify-between">
-                                        <div className="flex-1">
-                                            <CardTitle className="text-lg mb-2">{zap.name}</CardTitle>
-                                            <CardDescription className="flex items-center gap-2">
-                                                <span className="font-medium">{zap.trigger}</span>
-                                                <span>→</span>
-                                                <span>{zap.actions.join(" → ")}</span>
-                                            </CardDescription>
+                    <div className="grid lg:grid-cols-2 gap-6">
+                        {filteredZaps.map((zap) => {
+                            const triggerName = zap.trigger?.type?.name || 'No Trigger';
+                            const actionNames = zap.actions.map(action => action.type.name);
+                            const zapName = `${triggerName} → ${actionNames.join(' → ')}`;
+
+                            return (
+                                <Card key={zap.id} className="hover:shadow-md transition-shadow">
+                                    <CardHeader>
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex-1">
+                                                <CardTitle className="text-lg mb-2 capitalize">{zapName}</CardTitle>
+                                                <CardDescription className="flex items-center gap-2">
+                                                    <span className="font-medium capitalize">{triggerName}</span>
+                                                    <span>→</span>
+                                                    <span className="capitalize">{actionNames.join(" → ")}</span>
+                                                </CardDescription>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Badge variant="default">Active</Badge>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="sm">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end">
+                                                        <DropdownMenuItem>
+                                                            <Settings className="mr-2 h-4 w-4" />
+                                                            Edit
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem>
+                                                            <Pause className="mr-2 h-4 w-4" />
+                                                            Pause
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <Badge variant={zap.status === "active" ? "default" : "secondary"}>{zap.status}</Badge>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger asChild>
-                                                    <Button variant="ghost" size="sm">
-                                                        <MoreHorizontal className="h-4 w-4" />
-                                                    </Button>
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent align="end">
-                                                    <DropdownMenuItem>
-                                                        <Settings className="mr-2 h-4 w-4" />
-                                                        Edit
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem>
-                                                        {zap.status === "active" ? (
-                                                            <>
-                                                                <Pause className="mr-2 h-4 w-4" />
-                                                                Pause
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Play className="mr-2 h-4 w-4" />
-                                                                Activate
-                                                            </>
-                                                        )}
-                                                    </DropdownMenuItem>
-                                                    <DropdownMenuItem className="text-red-600">Delete</DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+                                            <span>ID: {zap.id}</span>
+                                            <span>{zap.actions.length} action{zap.actions.length !== 1 ? 's' : ''}</span>
                                         </div>
-                                    </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
-                                        <span>{zap.runs} runs</span>
-                                        <span>Last run: {zap.lastRun}</span>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        ))}
+                                    </CardContent>
+                                </Card>
+                            );
+                        })}
                     </div>
                 )}
             </div>
