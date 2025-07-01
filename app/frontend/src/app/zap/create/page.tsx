@@ -1,37 +1,34 @@
 "use client"
 
 import { useState } from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { Zap, ArrowRight, Plus, X, ChevronLeft } from "lucide-react"
+import { BACKEND_URL } from "@/config";
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Zap, ArrowRight, Plus, X, ChevronLeft } from "lucide-react"
-import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
-
-// Mock data for available triggers and actions
-const availableTriggers = [
-    { id: "gmail", name: "Gmail", description: "When you receive a new email" },
-    { id: "stripe", name: "Stripe", description: "When a payment is received" },
-    { id: "twitter", name: "Twitter", description: "When you post a new tweet" },
-    { id: "webhook", name: "Webhook", description: "When a webhook is received" },
-]
-
-const availableActions = [
-    { id: "slack", name: "Slack", description: "Send a message to Slack" },
-    { id: "hubspot", name: "HubSpot", description: "Create or update a contact" },
-    { id: "gdrive", name: "Google Drive", description: "Save file to Google Drive" },
-    { id: "email", name: "Email", description: "Send an email" },
-]
-
-type Step = "name" | "trigger" | "actions" | "review"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { useAvailableActionsAndTriggers } from "@/app/zap/create/useAvailableActionsAndTriggers";
+import type { Step, Action, Trigger } from "@/types";
 
 export default function CreateZapPage() {
+    const { data, isLoading, isError } = useAvailableActionsAndTriggers()
     const [currentStep, setCurrentStep] = useState<Step>("name")
-    const [zapData, setZapData] = useState({
+
+    const router = useRouter()
+
+    const [zapData, setZapData] = useState<{
+        name: string,
+        trigger: Trigger | null,
+        actions: Action[],
+    }>({
         name: "",
-        trigger: null as (typeof availableTriggers)[0] | null,
-        actions: [] as typeof availableActions,
+        trigger: null,
+        actions: [],
     })
 
     const handleNext = () => {
@@ -50,7 +47,7 @@ export default function CreateZapPage() {
         }
     }
 
-    const addAction = (action: (typeof availableActions)[0]) => {
+    const addAction = (action: Action) => {
         setZapData({
             ...zapData,
             actions: [...zapData.actions, action],
@@ -64,10 +61,32 @@ export default function CreateZapPage() {
         })
     }
 
-    const handleCreateZap = () => {
-        console.log("Creating zap:", zapData)
-        // Handle zap creation logic here
+    const handleCreateZap = async () => {
+        toast.promise(axios.post(`${BACKEND_URL}/api/v1/zap`, {
+            name: zapData.name,
+            availableTriggerId: zapData.trigger?.id,
+            triggerMetadata: {},
+            actions: zapData.actions.map((action) => ({
+                availableActionId: action.id,
+                actionMetadata: {},
+            })),
+        }, {
+            headers: {
+                Authorization: localStorage.getItem("token"),
+            },
+        }), {
+            loading: 'Creating Zap...',
+            success: () => {
+                router.push("/dashboard");
+                return 'Zap created successfully';
+            },
+            error: 'Error creating zap',
+        });
+
     }
+
+    if (isLoading) return <p className="p-8">Loading...</p>;
+    if (isError || !data) return <p className="p-8 text-red-500">Failed to load triggers/actions.</p>;
 
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -155,7 +174,7 @@ export default function CreateZapPage() {
                                     <p className="text-gray-600 dark:text-gray-300">What should start this automation?</p>
                                 </div>
                                 <div className="grid md:grid-cols-2 gap-4">
-                                    {availableTriggers.map((trigger) => (
+                                    {data.availableTriggers.map((trigger) => (
                                         <Card
                                             key={trigger.id}
                                             className={`cursor-pointer transition-all hover:shadow-md ${
@@ -203,7 +222,7 @@ export default function CreateZapPage() {
                                 <div>
                                     <h3 className="font-semibold mb-4">Available Actions:</h3>
                                     <div className="grid md:grid-cols-2 gap-4">
-                                        {availableActions.map((action) => (
+                                        {data.availableActions.map((action) => (
                                             <Card
                                                 key={action.id}
                                                 className="cursor-pointer transition-all hover:shadow-md"

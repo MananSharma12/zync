@@ -12,8 +12,10 @@
   "author": "Manan Sharma",
   "license": "ISC",
   "dependencies": {
-    "@prisma/client": "^6.9.0",
-    "prisma": "^6.10.0",
+    "@prisma/client": "^6.10.1",
     "kafkajs": "^2.2.4"
+  },
+  "devDependencies": {
+    "prisma": "^6.10.1"
   }
 }

@@ -35,9 +35,10 @@ model Trigger {
 }
 
 model AvailableTriggers {
-  id       String    @id @default(uuid())
-  name     String
-  triggers Trigger[]
+  id          String    @id @default(uuid())
+  name        String
+  description String
+  triggers    Trigger[]
 }
 
 model Action {

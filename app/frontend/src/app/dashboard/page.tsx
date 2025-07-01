@@ -36,7 +36,7 @@ export default function DashboardPage() {
     const zaps = useZaps()
 
     const filteredZaps = zaps.filter((zap) => {
-        const triggerName = zap.trigger?.type?.name || '';
+        const triggerName = zap.name || '';
         const actionNames = zap.actions.map(action => action.type.name).join(' ');
         const searchableText = `${triggerName} ${actionNames}`.toLowerCase();
 
@@ -121,9 +121,14 @@ export default function DashboardPage() {
                 ) : (
                     <div className="grid lg:grid-cols-2 gap-6">
                         {filteredZaps.map((zap) => {
-                            const triggerName = zap.trigger?.type?.name || 'No Trigger';
+                            const triggerName = zap.name || 'No Trigger';
                             const actionNames = zap.actions.map(action => action.type.name);
-                            const zapName = `${triggerName} → ${actionNames.join(' → ')}`;
+                            let zapName;
+                            if(triggerName === 'No Trigger') {
+                                zapName = `${triggerName} → ${actionNames.join(' → ')}`;
+                            } else {
+                                zapName = triggerName;
+                            }
 
                             return (
                                 <Card key={zap.id} className="hover:shadow-md transition-shadow">
