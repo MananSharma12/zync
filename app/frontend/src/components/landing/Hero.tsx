@@ -1,8 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
+import { useAuth } from "@/lib/auth-context";
 
 export const Hero = () => {
+    const { isAuthenticated } = useAuth();
+
     return (
         <>
             <section className="container mx-auto px-4 pt-20 pb-10 text-center">
@@ -14,11 +19,19 @@ export const Hero = () => {
                         Connect your apps and services together. Create powerful automations without writing a single line of code.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                        <Link href="/signup">
-                            <Button size="lg" className="text-lg px-8 py-6">
-                                Start Automating <ArrowRight className="ml-2 h-5 w-5" />
-                            </Button>
-                        </Link>
+                        {isAuthenticated ? (
+                            <Link href="/dashboard">
+                                <Button size="lg" className="text-lg px-8 py-6">
+                                    Go to Dashboard <ArrowRight className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
+                        ) : (
+                            <Link href="/signup">
+                                <Button size="lg" className="text-lg px-8 py-6">
+                                    Start Automating <ArrowRight className="ml-2 h-5 w-5" />
+                                </Button>
+                            </Link>
+                        )}
                     </div>
                 </div>
             </section>

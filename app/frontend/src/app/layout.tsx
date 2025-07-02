@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import { ThemeProvider } from "next-themes"
 import { ReactQueryProvider } from "@/lib/react-query-provider";
+import { AuthProvider } from "@/lib/auth-context";
 import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({ subsets: ["latin"] })
@@ -19,7 +20,9 @@ export default function RootLayout({ children, }: { children: React.ReactNode })
         <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <ReactQueryProvider>
-                {children}
+                <AuthProvider>
+                    {children}
+                </AuthProvider>
             </ReactQueryProvider>
             <Toaster />
         </ThemeProvider>

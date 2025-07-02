@@ -10,8 +10,10 @@ import Link from "next/link"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import axios from "axios";
-import { BACKEND_URL } from "@/config";
+import { BACKEND_URL, HOOKS_URL } from "@/config";
 import type { Zaps } from "@/types";
+import { useAuth } from "@/lib/auth-context";
+import { toast } from "sonner"
 
 function useZaps () {
     const [zaps, setZaps] = useState<Zaps[]>([])
@@ -34,6 +36,14 @@ function useZaps () {
 export default function DashboardPage() {
     const [searchQuery, setSearchQuery] = useState("")
     const zaps = useZaps()
+    const { user, logout } = useAuth()
+
+    const handleCopyWebhook = (url: string) => {
+        navigator.clipboard.writeText(url)
+            .then(() => {
+                toast.success('Copied to clipboard');
+            });
+    }
 
     const filteredZaps = zaps.filter((zap) => {
         const triggerName = zap.name || '';
@@ -59,13 +69,13 @@ export default function DashboardPage() {
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" size="sm">
-                                    John Doe
+                                    {user?.name || "User"}
                                 </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem>Profile</DropdownMenuItem>
                                 <DropdownMenuItem>Settings</DropdownMenuItem>
-                                <DropdownMenuItem>Sign Out</DropdownMenuItem>
+                                <DropdownMenuItem onClick={logout}>Sign Out</DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -166,6 +176,17 @@ export default function DashboardPage() {
                                         </div>
                                     </CardHeader>
                                     <CardContent>
+                                        <div className="mb-2 text-sm">
+                                            <span>Webhook URL:</span>
+                                            <br/>
+                                            <Button
+                                                variant="link"
+                                                className="p-0 text-blue-400"
+                                                onClick={() => handleCopyWebhook(`${HOOKS_URL}/hooks/catch/1/${zap.id}`)}
+                                            >
+                                                {`${HOOKS_URL}/hooks/catch/1/${zap.id}`}
+                                            </Button>
+                                        </div>
                                         <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
                                             <span>ID: {zap.id}</span>
                                             <span>{zap.actions.length} action{zap.actions.length !== 1 ? 's' : ''}</span>

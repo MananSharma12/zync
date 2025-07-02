@@ -12,6 +12,7 @@ import Link from "next/link"
 import axios from "axios";
 import { BACKEND_URL } from "@/config";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 export default function SignInPage() {
     const [showPassword, setShowPassword] = useState(false)
@@ -22,11 +23,17 @@ export default function SignInPage() {
 
     const router = useRouter();
 
+    const { login } = useAuth();
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        const res = await axios.post(`${BACKEND_URL}/api/v1/user/signin`, formData)
-        localStorage.setItem("token", res.data.token)
-        router.push("/dashboard");
+        try {
+            const res = await axios.post(`${BACKEND_URL}/api/v1/user/signin`, formData)
+            login(res.data.token);
+            router.push("/dashboard");
+        } catch (error) {
+            console.error("Login failed:", error);
+        }
     }
 
     return (
